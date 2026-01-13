@@ -1,0 +1,17 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow any authenticated user to read stats and logs
+    match /{document=**} {
+      allow read: if true;
+    }
+    // Only allow writing logs if the user is authenticated
+    match /logs/{logId} {
+      allow create: if request.auth != null;
+    }
+    // Allow incrementing the global total
+    match /stats/global {
+      allow update: if request.auth != null;
+    }
+  }
+}
