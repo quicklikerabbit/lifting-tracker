@@ -10,7 +10,8 @@ import {
   limit, 
   writeBatch, 
   increment, 
-  serverTimestamp
+  serverTimestamp,
+  Timestamp
 } from 'firebase/firestore';
 import './index.css';
 import type { User } from 'firebase/auth'
@@ -27,6 +28,13 @@ export default function App() {
   const [totalLifted, setTotalLifted] = useState(0);
   const [recentLogs, setRecentLogs] = useState<Log[]>([]);
   const [weightInput, setWeightInput] = useState('');
+  const [dateInput, setDateInput] = useState(() => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  });
   const [loading, setLoading] = useState(false);
 
   // 1. Auth Listener
@@ -84,6 +92,16 @@ export default function App() {
     setLoading(true);
     try {
       const batch = writeBatch(db);
+
+      // Determine timestamp: use serverTimestamp() if today, otherwise use selected date (midnight)
+      const [y, m, d] = dateInput.split('-').map(Number);
+      const selectedDate = new Date(y, m - 1, d);
+      const now = new Date();
+      const isToday = selectedDate.getDate() === now.getDate() &&
+                      selectedDate.getMonth() === now.getMonth() &&
+                      selectedDate.getFullYear() === now.getFullYear();
+      
+      const timestamp = isToday ? serverTimestamp() : Timestamp.fromDate(selectedDate);
       
       // Ref for new log
       const logRef = doc(collection(db, "logs"));
@@ -91,7 +109,7 @@ export default function App() {
         userId: user.uid,
         userName: user.displayName || 'Anonymous',
         weight: weight,
-        timestamp: serverTimestamp()
+        timestamp: timestamp
       });
 
       // Ref for global stats
@@ -128,6 +146,8 @@ export default function App() {
             onSubmit={handleSubmit} 
             weightInput={weightInput} 
             setWeightInput={setWeightInput} 
+            dateInput={dateInput}
+            setDateInput={setDateInput}
             loading={loading} 
           />
         )}
