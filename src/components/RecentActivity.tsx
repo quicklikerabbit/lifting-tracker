@@ -34,7 +34,7 @@ export default function RecentActivity({ logs }: RecentActivityProps) {
                 </span>
               </div>
               <span className="font-bold text-emerald-600">
-                +{log.weight} lbs
+                +{log.weight.toLocaleString()} lbs
               </span>
             </div>
           ))
