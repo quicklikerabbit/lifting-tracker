@@ -113,6 +113,7 @@ export default function App() {
         userName: user.displayName || 'Anonymous',
         weight: weight,
         timestamp: timestamp,
+        photoURL: user.photoURL,
       });
 
       // Ref for global stats
@@ -134,6 +135,27 @@ export default function App() {
     }
   };
 
+  const handleDelete = async (log: Log) => {
+    if (!user || user.uid !== log.userId) return;
+    if (!window.confirm('Are you sure you want to delete this log?')) return;
+
+    try {
+      const batch = writeBatch(db);
+      const logRef = doc(db, 'logs', log.id);
+      const statsRef = doc(db, 'stats', 'global');
+
+      batch.delete(logRef);
+      batch.update(statsRef, {
+        totalWeightLifted: increment(-log.weight),
+      });
+
+      await batch.commit();
+    } catch (error) {
+      console.error('Error deleting log', error);
+      alert('Failed to delete log.');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans p-4 md:p-8">
       <div className="max-w-md mx-auto space-y-6">
@@ -152,7 +174,11 @@ export default function App() {
           />
         )}
 
-        <RecentActivity logs={recentLogs} />
+        <RecentActivity
+          logs={recentLogs}
+          currentUserId={user?.uid}
+          onDelete={handleDelete}
+        />
       </div>
     </div>
   );

@@ -8,6 +8,7 @@ service cloud.firestore {
     // Only allow writing logs if the user is authenticated
     match /logs/{logId} {
       allow create: if request.auth != null;
+      allow delete: if request.auth != null && request.auth.uid == resource.data.userId;
     }
     // Allow incrementing the global total
     match /stats/global {

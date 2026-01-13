@@ -6,4 +6,5 @@ export interface Log {
   userName: string;
   weight: number;
   timestamp: Timestamp;
+  photoURL?: string | null;
 }
