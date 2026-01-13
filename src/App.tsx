@@ -1,20 +1,20 @@
 import { useState, useEffect } from 'react';
 import { auth, googleProvider, db } from './firebase';
 import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
-import { 
-  doc, 
-  onSnapshot, 
-  collection, 
-  query, 
-  orderBy, 
-  limit, 
-  writeBatch, 
-  increment, 
+import {
+  doc,
+  onSnapshot,
+  collection,
+  query,
+  orderBy,
+  limit,
+  writeBatch,
+  increment,
   serverTimestamp,
-  Timestamp
+  Timestamp,
 } from 'firebase/firestore';
 import './index.css';
-import type { User } from 'firebase/auth'
+import type { User } from 'firebase/auth';
 import Header from './components/Header';
 import InputForm from './components/InputForm';
 import ProgressCard from './components/ProgressCard';
@@ -47,7 +47,7 @@ export default function App() {
 
   // 2. Real-time Stats (Global Total)
   useEffect(() => {
-    const unsub = onSnapshot(doc(db, "stats", "global"), (doc) => {
+    const unsub = onSnapshot(doc(db, 'stats', 'global'), (doc) => {
       if (doc.exists()) {
         setTotalLifted(doc.data().totalWeightLifted || 0);
       }
@@ -58,14 +58,14 @@ export default function App() {
   // 3. Real-time Recent Logs
   useEffect(() => {
     const q = query(
-      collection(db, "logs"),
-      orderBy("timestamp", "desc"),
+      collection(db, 'logs'),
+      orderBy('timestamp', 'desc'),
       limit(10)
     );
     const unsub = onSnapshot(q, (snapshot) => {
-      const logs = snapshot.docs.map(doc => ({
+      const logs = snapshot.docs.map((doc) => ({
         id: doc.id,
-        ...doc.data()
+        ...doc.data(),
       })) as Log[];
       setRecentLogs(logs);
     });
@@ -76,7 +76,7 @@ export default function App() {
     try {
       await signInWithPopup(auth, googleProvider);
     } catch (error) {
-      console.error("Error signing in", error);
+      console.error('Error signing in', error);
     }
   };
 
@@ -97,33 +97,38 @@ export default function App() {
       const [y, m, d] = dateInput.split('-').map(Number);
       const selectedDate = new Date(y, m - 1, d);
       const now = new Date();
-      const isToday = selectedDate.getDate() === now.getDate() &&
-                      selectedDate.getMonth() === now.getMonth() &&
-                      selectedDate.getFullYear() === now.getFullYear();
-      
-      const timestamp = isToday ? serverTimestamp() : Timestamp.fromDate(selectedDate);
-      
+      const isToday =
+        selectedDate.getDate() === now.getDate() &&
+        selectedDate.getMonth() === now.getMonth() &&
+        selectedDate.getFullYear() === now.getFullYear();
+
+      const timestamp = isToday
+        ? serverTimestamp()
+        : Timestamp.fromDate(selectedDate);
+
       // Ref for new log
-      const logRef = doc(collection(db, "logs"));
+      const logRef = doc(collection(db, 'logs'));
       batch.set(logRef, {
         userId: user.uid,
         userName: user.displayName || 'Anonymous',
         weight: weight,
-        timestamp: timestamp
+        timestamp: timestamp,
       });
 
       // Ref for global stats
-      const statsRef = doc(db, "stats", "global");
+      const statsRef = doc(db, 'stats', 'global');
       // Note: Ensure this doc exists in Firestore or use set with merge if first run
-      batch.update(statsRef, { 
-        totalWeightLifted: increment(weight) 
+      batch.update(statsRef, {
+        totalWeightLifted: increment(weight),
       });
 
       await batch.commit();
       setWeightInput('');
     } catch (error) {
-      console.error("Error submitting lift", error);
-      alert("Failed to submit lift. Make sure the 'stats/global' document exists.");
+      console.error('Error submitting lift', error);
+      alert(
+        "Failed to submit lift. Make sure the 'stats/global' document exists."
+      );
     } finally {
       setLoading(false);
     }
@@ -132,28 +137,22 @@ export default function App() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans p-4 md:p-8">
       <div className="max-w-md mx-auto space-y-6">
-        
-        <Header 
-          user={user} 
-          onLogin={handleLogin} 
-          onLogout={handleLogout} 
-        />
+        <Header user={user} onLogin={handleLogin} onLogout={handleLogout} />
 
         <ProgressCard totalLifted={totalLifted} goal={GOAL} />
 
         {user && (
-          <InputForm 
-            onSubmit={handleSubmit} 
-            weightInput={weightInput} 
-            setWeightInput={setWeightInput} 
+          <InputForm
+            onSubmit={handleSubmit}
+            weightInput={weightInput}
+            setWeightInput={setWeightInput}
             dateInput={dateInput}
             setDateInput={setDateInput}
-            loading={loading} 
+            loading={loading}
           />
         )}
 
         <RecentActivity logs={recentLogs} />
-
       </div>
     </div>
   );
