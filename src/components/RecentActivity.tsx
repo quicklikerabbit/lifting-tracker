@@ -33,6 +33,7 @@ export default function RecentActivity({
                     src={log.photoURL}
                     alt={log.userName}
                     className="w-8 h-8 rounded-full"
+                    referrerPolicy="no-referrer"
                   />
                 )}
                 <div className="flex flex-col">
