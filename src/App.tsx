@@ -60,7 +60,7 @@ export default function App() {
     const q = query(
       collection(db, 'logs'),
       orderBy('timestamp', 'desc'),
-      limit(10)
+      limit(100)
     );
     const unsub = onSnapshot(q, (snapshot) => {
       const logs = snapshot.docs.map((doc) => ({
