@@ -24,19 +24,21 @@ export default function InputForm({
     >
       <h2 className="font-semibold">Log a Lift</h2>
       <div className="flex flex-col gap-2">
-        <div className="flex gap-2">
-          <input
-            type="date"
-            value={dateInput}
-            onChange={(e) => setDateInput(e.target.value)}
-            className="border border-slate-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-900"
-          />
+        <div className="flex flex-col sm:flex-row gap-2">
+          <div className="w-full sm:w-max border border-slate-300 rounded-md px-3 py-2 focus-within:ring-2 focus-within:ring-slate-900 flex items-center">
+            <input
+              type="date"
+              value={dateInput}
+              onChange={(e) => setDateInput(e.target.value)}
+              className="bg-transparent focus:outline-none w-full"
+            />
+          </div>
           <input
             type="number"
             value={weightInput}
             onChange={(e) => setWeightInput(e.target.value)}
             placeholder="Weight (lbs)"
-            className="flex-1 border border-slate-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-900"
+            className="w-full sm:flex-1 border border-slate-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-900"
             autoFocus
           />
         </div>
