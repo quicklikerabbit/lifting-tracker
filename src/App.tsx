@@ -160,9 +160,7 @@ export default function App() {
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans p-4 md:p-8">
       <div className="max-w-md mx-auto space-y-6">
         <Header user={user} onLogin={handleLogin} onLogout={handleLogout} />
-
         <ProgressCard totalLifted={totalLifted} goal={GOAL} />
-
         {user && (
           <InputForm
             onSubmit={handleSubmit}
@@ -173,7 +171,6 @@ export default function App() {
             loading={loading}
           />
         )}
-
         <RecentActivity
           logs={recentLogs}
           currentUserId={user?.uid}
