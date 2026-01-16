@@ -1,12 +1,20 @@
-import type { User } from 'firebase/auth';
+import { signInWithPopup, signOut, type User } from 'firebase/auth';
+import { auth, googleProvider } from '../firebase';
 
 interface HeaderProps {
   user: User | null;
-  onLogin: () => void;
-  onLogout: () => void;
 }
 
-export default function Header({ user, onLogin, onLogout }: HeaderProps) {
+export default function Header({ user }: HeaderProps) {
+  const onLogin = async () => {
+    try {
+      await signInWithPopup(auth, googleProvider);
+    } catch (error) {
+      console.error('Error signing in', error);
+    }
+  };
+
+  const onLogout = () => signOut(auth);
   return (
     <header className="flex justify-between items-center">
       <h1 className="text-2xl font-bold tracking-tight">6M Lbs Challenge</h1>
