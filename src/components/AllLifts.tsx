@@ -2,28 +2,29 @@ import {
   query,
   collection,
   orderBy,
-  limit,
   onSnapshot,
   doc,
   increment,
   writeBatch,
+  where,
 } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { db } from '../firebase';
 import type { Log } from '../types';
 
-interface RecentActivityProps {
+interface AllLiftsProps {
   currentUserId?: string;
 }
 
-export default function RecentActivity({ currentUserId }: RecentActivityProps) {
+export default function AllLifts({ currentUserId }: AllLiftsProps) {
   const [logs, setLogs] = useState<Log[]>([]);
 
   useEffect(() => {
+    if (!currentUserId) return;
     const q = query(
       collection(db, 'logs'),
-      orderBy('timestamp', 'desc'),
-      limit(10)
+      where('userId', '==', currentUserId),
+      orderBy('timestamp', 'desc')
     );
     const unsub = onSnapshot(q, (snapshot) => {
       const logs = snapshot.docs.map((doc) => ({
@@ -33,7 +34,7 @@ export default function RecentActivity({ currentUserId }: RecentActivityProps) {
       setLogs(logs);
     });
     return () => unsub();
-  }, []);
+  }, [currentUserId]);
 
   const onDelete = async (log: Log) => {
     if (!currentUserId || currentUserId !== log.userId) return;

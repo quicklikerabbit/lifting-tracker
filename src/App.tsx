@@ -6,15 +6,21 @@ import InputForm from './components/InputForm';
 import Leaderboard from './components/Leaderboard';
 import ProgressCard from './components/ProgressCard';
 import RecentActivity from './components/RecentActivity';
+import AllLifts from './components/AllLifts';
+import Tabs, { type Tab } from './components/Tabs';
 import { auth } from './firebase';
 import './index.css';
 
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
+  const [activeTab, setActiveTab] = useState<Tab>('recent');
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
+      if (!currentUser) {
+        setActiveTab('recent');
+      }
     });
     return () => unsubscribe();
   }, []);
@@ -26,7 +32,21 @@ export default function App() {
         <ProgressCard />
         {user && <InputForm currentUser={user} />}
         <Leaderboard />
-        <RecentActivity currentUserId={user?.uid} />
+        {user && <Tabs activeTab={activeTab} onTabChange={setActiveTab} />}
+        <div>
+          {user ? (
+            <>
+              <div className={activeTab === 'recent' ? '' : 'hidden'}>
+                <RecentActivity currentUserId={user.uid} />
+              </div>
+              <div className={activeTab === 'myLifts' ? '' : 'hidden'}>
+                <AllLifts currentUserId={user.uid} />
+              </div>
+            </>
+          ) : (
+            <RecentActivity />
+          )}
+        </div>
       </div>
     </div>
   );
