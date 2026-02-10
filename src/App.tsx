@@ -30,23 +30,21 @@ export default function App() {
       <div className="max-w-md mx-auto space-y-6">
         <Header user={user} />
         <ProgressCard />
-        {user && <InputForm currentUser={user} />}
-        <Leaderboard />
-        {user && <Tabs activeTab={activeTab} onTabChange={setActiveTab} />}
-        <div>
-          {user ? (
-            <>
+        {user && (
+          <>
+            <InputForm currentUser={user} />
+            <Leaderboard />
+            <Tabs activeTab={activeTab} onTabChange={setActiveTab} />
+            <div>
               <div className={activeTab === 'recent' ? '' : 'hidden'}>
                 <RecentActivity currentUserId={user.uid} />
               </div>
               <div className={activeTab === 'myLifts' ? '' : 'hidden'}>
                 <AllLifts currentUserId={user.uid} />
               </div>
-            </>
-          ) : (
-            <RecentActivity />
-          )}
-        </div>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
