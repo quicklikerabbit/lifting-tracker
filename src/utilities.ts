@@ -42,8 +42,7 @@ export const processLogsForLeaderboard = (logs: Log[]): LeaderboardData => {
       value: u.totalWeight,
       photoURL: u.photoURL,
     }))
-    .sort((a, b) => b.value - a.value)
-    .slice(0, 3);
+    .sort((a, b) => b.value - a.value);
 
   const mostLifts = users
     .map((u) => ({
@@ -51,8 +50,7 @@ export const processLogsForLeaderboard = (logs: Log[]): LeaderboardData => {
       value: u.liftCount,
       photoURL: u.photoURL,
     }))
-    .sort((a, b) => b.value - a.value)
-    .slice(0, 3);
+    .sort((a, b) => b.value - a.value);
 
   const topDailyTotal = users
     .map((u) => {
@@ -63,8 +61,7 @@ export const processLogsForLeaderboard = (logs: Log[]): LeaderboardData => {
         photoURL: u.photoURL,
       };
     })
-    .sort((a, b) => b.value - a.value)
-    .slice(0, 3);
+    .sort((a, b) => b.value - a.value);
 
   return { totalWeight, mostLifts, topDailyTotal };
 };
