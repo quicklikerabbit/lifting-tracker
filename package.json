@@ -10,7 +10,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "format": "prettier --write .",
-    "start": "vite"
+    "start": "vite",
+    "sync-indexes": "firebase firestore:indexes > firestore.indexes.json && prettier --write firestore.indexes.json"
   },
   "dependencies": {
     "firebase": "^12.7.0",
