@@ -93,6 +93,7 @@ export default function InputForm({ currentUser }: InputFormProps) {
             />
           </div>
           <input
+            inputMode="numeric"
             type="number"
             value={weightInput}
             onChange={(e) => setWeightInput(e.target.value)}
