@@ -25,8 +25,15 @@ export default tseslint.config(
         'warn',
         { allowConstantExport: true },
       ],
+      'func-style': ['error', 'declaration', { allowArrowFunctions: false }],
     },
   },
   // 2. Add it to the end of the config array
-  prettierRecommended
+  prettierRecommended,
+  // Re-assert rules that prettierRecommended disables but we still want
+  {
+    rules: {
+      'arrow-body-style': ['error', 'as-needed'],
+    },
+  }
 );
