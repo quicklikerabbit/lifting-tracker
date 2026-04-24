@@ -1,15 +1,5 @@
-import {
-  query,
-  collection,
-  orderBy,
-  limit,
-  onSnapshot,
-  doc,
-  increment,
-  writeBatch,
-} from 'firebase/firestore';
-import { useEffect, useState } from 'react';
-import { db } from '../firebase';
+import { useLogs } from '../hooks/useLogs';
+import { deleteLog } from '../services/logsService';
 import type { Log } from '../types';
 
 interface RecentActivityProps {
@@ -17,44 +7,20 @@ interface RecentActivityProps {
 }
 
 export default function RecentActivity({ currentUserId }: RecentActivityProps) {
-  const [logs, setLogs] = useState<Log[]>([]);
+  const allLogs = useLogs();
+  const logs = allLogs.slice(0, 10);
 
-  useEffect(() => {
-    const q = query(
-      collection(db, 'logs'),
-      orderBy('timestamp', 'desc'),
-      limit(10)
-    );
-    const unsub = onSnapshot(q, (snapshot) => {
-      const logs = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Log[];
-      setLogs(logs);
-    });
-    return () => unsub();
-  }, []);
-
-  const onDelete = async (log: Log) => {
+  async function onDelete(log: Log) {
     if (!currentUserId || currentUserId !== log.userId) return;
     if (!window.confirm('Are you sure you want to delete this log?')) return;
 
     try {
-      const batch = writeBatch(db);
-      const logRef = doc(db, 'logs', log.id);
-      const statsRef = doc(db, 'stats', 'global');
-
-      batch.delete(logRef);
-      batch.update(statsRef, {
-        totalWeightLifted: increment(-log.weight),
-      });
-
-      await batch.commit();
+      await deleteLog(log.id, log.weight);
     } catch (error) {
       console.error('Error deleting log', error);
       alert('Failed to delete log.');
     }
-  };
+  }
 
   return (
     <div className="space-y-3">

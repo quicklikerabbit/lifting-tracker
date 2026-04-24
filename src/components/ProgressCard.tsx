@@ -1,21 +1,9 @@
-import { onSnapshot, doc } from 'firebase/firestore';
-import { useState, useEffect } from 'react';
-import { db } from '../firebase';
+import { useGlobalStats } from '../hooks/useGlobalStats';
 
 const goal = 6000000;
 
 export default function ProgressCard() {
-  const [totalLifted, setTotalLifted] = useState(0);
-
-  useEffect(() => {
-    const unsub = onSnapshot(doc(db, 'stats', 'global'), (doc) => {
-      if (doc.exists()) {
-        setTotalLifted(doc.data().totalWeightLifted || 0);
-      }
-    });
-    return () => unsub();
-  }, []);
-
+  const totalLifted = useGlobalStats();
   const progressPercentage = Math.min((totalLifted / goal) * 100, 100);
 
   return (

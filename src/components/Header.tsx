@@ -6,15 +6,17 @@ interface HeaderProps {
 }
 
 export default function Header({ user }: HeaderProps) {
-  const onLogin = async () => {
+  async function onLogin() {
     try {
       await signInWithPopup(auth, googleProvider);
     } catch (error) {
       console.error('Error signing in', error);
     }
-  };
+  }
 
-  const onLogout = () => signOut(auth);
+  function onLogout() {
+    return signOut(auth);
+  }
   return (
     <header className="flex justify-between items-center">
       <h1 className="text-2xl font-bold tracking-tight">6M Lbs Challenge</h1>

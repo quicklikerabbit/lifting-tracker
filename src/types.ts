@@ -19,4 +19,6 @@ export interface LeaderboardData {
   totalWeight: LeaderboardEntry[];
   mostLifts: LeaderboardEntry[];
   topDailyTotal: LeaderboardEntry[];
+  avgWeightPerSession: LeaderboardEntry[];
+  bestWeekTotal: LeaderboardEntry[];
 }

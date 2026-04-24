@@ -1,14 +1,6 @@
 import type { User } from 'firebase/auth';
-import {
-  collection,
-  doc,
-  increment,
-  serverTimestamp,
-  Timestamp,
-  writeBatch,
-} from 'firebase/firestore';
 import { useState } from 'react';
-import { db } from '../firebase';
+import { addLog } from '../services/logsService';
 
 interface InputFormProps {
   currentUser?: User;
@@ -25,7 +17,7 @@ export default function InputForm({ currentUser }: InputFormProps) {
   });
   const [weightInput, setWeightInput] = useState('');
 
-  const onSubmit = async (e: React.FormEvent) => {
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!currentUser || !weightInput) return;
 
@@ -34,38 +26,7 @@ export default function InputForm({ currentUser }: InputFormProps) {
 
     setLoading(true);
     try {
-      const batch = writeBatch(db);
-
-      // Determine timestamp: use serverTimestamp() if today, otherwise use selected date (midnight)
-      const [y, m, d] = dateInput.split('-').map(Number);
-      const selectedDate = new Date(y, m - 1, d);
-      const now = new Date();
-      const isToday =
-        selectedDate.getDate() === now.getDate() &&
-        selectedDate.getMonth() === now.getMonth() &&
-        selectedDate.getFullYear() === now.getFullYear();
-
-      const timestamp = isToday
-        ? serverTimestamp()
-        : Timestamp.fromDate(selectedDate);
-
-      // Ref for new log
-      const logRef = doc(collection(db, 'logs'));
-      batch.set(logRef, {
-        userId: currentUser.uid,
-        userName: currentUser.displayName || 'Anonymous',
-        weight: weight,
-        timestamp: timestamp,
-        photoURL: currentUser.photoURL,
-      });
-
-      // Ref for global stats
-      const statsRef = doc(db, 'stats', 'global');
-      batch.update(statsRef, {
-        totalWeightLifted: increment(weight),
-      });
-
-      await batch.commit();
+      await addLog(currentUser, weight, dateInput);
       setWeightInput('');
     } catch (error) {
       console.error('Error submitting lift', error);
@@ -75,7 +36,8 @@ export default function InputForm({ currentUser }: InputFormProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }
+
   return (
     <form
       onSubmit={onSubmit}
