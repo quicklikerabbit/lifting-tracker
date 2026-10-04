@@ -58,11 +58,7 @@ export default function Leaderboard() {
         <Board title="Total Weight" entries={data.totalWeight} unit="lbs" />
         <Board title="Total Lifts" entries={data.mostLifts} />
         <Board title="Max Daily" entries={data.topDailyTotal} unit="lbs" />
-        <Board
-          title="Avg / Session"
-          entries={data.avgWeightPerSession}
-          unit="lbs"
-        />
+        <Board title="This Week" entries={data.weightThisWeek} unit="lbs" />
         <Board title="Best Week" entries={data.bestWeekTotal} unit="lbs" />
       </div>
     </div>

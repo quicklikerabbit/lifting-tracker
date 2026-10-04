@@ -78,10 +78,11 @@ export function processLogsForLeaderboard(logs: Log[]): LeaderboardData {
     }))
     .sort((a, b) => b.value - a.value);
 
-  const avgWeightPerSession = users
+  const currentWeekKey = isoWeekKey(new Date());
+  const weightThisWeek = users
     .map((u) => ({
       userName: u.userName,
-      value: u.liftCount > 0 ? Math.round(u.totalWeight / u.liftCount) : 0,
+      value: u.weeklyTotals[currentWeekKey] || 0,
       photoURL: u.photoURL,
     }))
     .sort((a, b) => b.value - a.value);
@@ -98,7 +99,7 @@ export function processLogsForLeaderboard(logs: Log[]): LeaderboardData {
     totalWeight,
     mostLifts,
     topDailyTotal,
-    avgWeightPerSession,
+    weightThisWeek,
     bestWeekTotal,
   };
 }
