@@ -11,33 +11,37 @@ const views: { id: View; label: string }[] = [
   { id: 'trend', label: 'Trend' },
 ];
 
-export default function ProgressCard() {
+export default function ProgressCard({ isLoggedIn }: { isLoggedIn: boolean }) {
   const totalLifted = useGlobalStats();
   const progressPercentage = Math.min((totalLifted / goal) * 100, 100);
-  const [view, setView] = useState<View>('bar');
+  const [selectedView, setSelectedView] = useState<View>('bar');
+  // Logged-out users only get the overview bar
+  const view = isLoggedIn ? selectedView : 'bar';
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-      <nav
-        className="flex gap-4 mb-4 border-b border-slate-100"
-        aria-label="Progress views"
-      >
-        {views.map((v) => (
-          <button
-            key={v.id}
-            type="button"
-            onClick={() => setView(v.id)}
-            className={`${
-              view === v.id
-                ? 'border-emerald-500 text-emerald-600'
-                : 'border-transparent text-slate-500 hover:text-slate-700'
-            } -mb-px pb-2 border-b-2 text-xs font-medium focus:outline-none`}
-            aria-current={view === v.id ? 'page' : undefined}
-          >
-            {v.label}
-          </button>
-        ))}
-      </nav>
+      {isLoggedIn && (
+        <nav
+          className="flex gap-4 mb-4 border-b border-slate-100"
+          aria-label="Progress views"
+        >
+          {views.map((v) => (
+            <button
+              key={v.id}
+              type="button"
+              onClick={() => setSelectedView(v.id)}
+              className={`${
+                view === v.id
+                  ? 'border-emerald-500 text-emerald-600'
+                  : 'border-transparent text-slate-500 hover:text-slate-700'
+              } -mb-px pb-2 border-b-2 text-xs font-medium focus:outline-none`}
+              aria-current={view === v.id ? 'page' : undefined}
+            >
+              {v.label}
+            </button>
+          ))}
+        </nav>
+      )}
       <div className="flex justify-between items-end mb-2">
         <span className="text-sm font-medium text-slate-500">
           Total Progress
