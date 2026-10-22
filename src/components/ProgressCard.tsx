@@ -8,7 +8,7 @@ type View = 'bar' | 'trend';
 
 const views: { id: View; label: string }[] = [
   { id: 'bar', label: 'Overview' },
-  { id: 'trend', label: 'Over Time' },
+  { id: 'trend', label: 'Trend' },
 ];
 
 export default function ProgressCard() {
